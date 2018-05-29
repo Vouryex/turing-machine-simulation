@@ -1,0 +1,62 @@
+body {
+    background-color: #56CBF9;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.active {
+    background-color: #FF729F;
+}
+
+#form {
+    margin-top: 130px;
+}
+
+#form input {
+    margin: 3px 0;
+}
+
+#form button {
+    margin: 3px 0;
+}
+
+#input_tape {
+    width:100%;
+    overflow-x:scroll;
+    overflow-y:hidden;
+    background:rgba(255,255,255,.8);
+    height: 45px;
+    position:relative;
+    margin: 20px auto 0 auto;
+    border: 3px solid #fff;
+    background-color: #fff;
+    font-size: 0;
+}
+
+.scroll {
+    height:100%;
+    padding:0px;
+    width:auto;
+    position:absolute;
+    white-space:nowrap;
+}
+
+#input {
+    height:50%;
+    width:10px;
+    position:relative;
+    display:inline-block;
+    font-size: 15px;
+    margin: 0;
+    padding: 3px;
+    border: 3px solid #56CBF9;*/
+}
+
+#next_configuration {
+    width: 200px;
+    margin: 20px auto;
+}
+
