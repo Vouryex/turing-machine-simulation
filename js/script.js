@@ -1,11 +1,48 @@
 const inputTapeInit = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
-const columnConversion = ['1', '#', 'b', 'x', 'y'];
-const acceptingStates = ["25"];
-let inputTape = inputTapeInit;
-let inputTapeDOM = "";
-let inputHead = -1;
-let finiteControl = null;
-let currState = 0;
+
+class TuringMachine {
+    constructor(inputTape, inputHead, finiteControl, currState, acceptingStates, alphabet) {
+        this._inputTape = inputTape;
+        this._inputHead = inputHead;
+        this._finiteControl = finiteControl;
+        this._currState = currState;
+        this._acceptingStates = acceptingStates;
+        this._alphabet = alphabet;
+    }
+
+    inputTapeDOM() {
+        let inputTapeDOM = "";
+        for(let i = 0; i < this._inputTape.length; i++) {
+            let active = "";
+            if(i === this._inputHead) {
+                active = "active";
+            }
+            inputTapeDOM += `<div id='input' class=${active}>${this._inputTape.charAt(i)}</div>`;
+        }
+        return inputTapeDOM;
+    }
+
+    nextConfig() {
+        if(this._acceptingStates.includes(this._currState) || !this._finiteControl) {
+            return;
+        }
+
+        let inputSymbol = this._inputTape.charAt(this._inputHead);
+        let transition = this._finiteControl.states[this._currState].transitions[this._alphabet.indexOf(inputSymbol)];
+        console.log(transition);
+        this._currState = transition.nextState;
+        this._inputTape = setCharAt(this._inputTape, this._inputHead, transition.update);
+        if(transition.move === 'R') {
+            this._inputHead++;
+        } else {
+            this._inputHead--;
+        }
+
+        if(this._acceptingStates.includes(this._currState)) {
+            console.log("Computation Finished");
+        }
+    }
+}
 
 class Transition {
     constructor(transition) {
@@ -45,8 +82,37 @@ class State {
 }
 
 class FiniteControl {
-    constructor() {
-        this._transitionTable = "1,b,R;;;;\n"
+    constructor(transitionTable) {
+        this._states = FiniteControl.initTransitionTable(transitionTable);
+    }
+
+    static initTransitionTable(transitionTable) {
+        let states = [];
+        let transitionString = transitionTable.split("\n");
+        for(let i = 0; i < transitionString.length; i++) {
+            states.push(new State(transitionString[i]));
+        }
+        return states;
+    }
+
+    get states() {
+        return this._states;
+    }
+}
+
+const displayInputTape = () => {
+    let inputTapeDOM = turingMachine.inputTapeDOM();
+    document.getElementById("input_tape").childNodes[1].innerHTML = inputTapeDOM;
+};
+
+const initConfig = (simulateSelect) => {
+    if(simulateSelect === 1) {
+        firstVal = document.getElementById("first_value").value;
+        secondVal = document.getElementById("second_value").value;
+        document.getElementById("first_value").value = "";
+        document.getElementById("second_value").value = "";
+
+        const transitionTable = "1,b,R;;;;\n"
                                 + "1,1,R;2,1,R;;;\n"
                                 + "3,#,R;;;;\n"
                                 + "3,1,R;;4,1,R;;\n"
@@ -71,43 +137,17 @@ class FiniteControl {
                                 + ";23,1,L;;18,1,R;\n"
                                 + "23,1,L;7,#,L;;;\n"
                                 + ";25,#,R;;24,1,L;";
-        this._states = FiniteControl.initTransitionTable(this._transitionTable);
+
+        inputTape = initInputTape(firstVal, secondVal);
+        finiteControl = new FiniteControl(transitionTable);
+        turingMachine = new TuringMachine(inputTape, 0, finiteControl, 0, ["25"], ['1', '#', 'b', 'x', 'y']);
     }
 
-    static initTransitionTable(transitionTable) {
-        let states = [];
-        let transitionString = transitionTable.split("\n");
-        for(let i = 0; i < transitionString.length; i++) {
-            states.push(new State(transitionString[i]));
-        }
-        return states;
-    }
-
-    get states() {
-        return this._states;
-    }
-}
-
-const displayInputTape = () => {
-    inputTapeDOM = "";
-    for(let i = 0; i < inputTape.length; i++) {
-        let active = "";
-        if(i === inputHead) {
-            active = "active";
-        }
-        inputTapeDOM += `<div id='input' class=${active}>${inputTape.charAt(i)}</div>`;
-    }
-
-    document.getElementById("input_tape").childNodes[1].innerHTML = inputTapeDOM;
+    displayInputTape();
 };
 
-const initConfig = () => {
-    firstVal = document.getElementById("first_value").value;
-    secondVal = document.getElementById("second_value").value;
-    document.getElementById("first_value").value = "";
-    document.getElementById("second_value").value = "";
-
-    inputTape = inputTapeInit;
+const initInputTape = (firstVal, secondVal) => {
+    let inputTape = inputTapeInit;
     for(let i = 0; i < secondVal; i++) {
         inputTape = "1" + inputTape;
     }
@@ -115,33 +155,11 @@ const initConfig = () => {
     for(let i = 0; i < firstVal; i++) {
         inputTape = "1" + inputTape;
     }
-    inputHead = 0;
-    displayInputTape();
-
-    finiteControl = new FiniteControl();
-    currState = 0;
-};
+    return inputTape;
+}
 
 const nextConfig = () => {
-    if(acceptingStates.includes(currState)) {
-        return;
-    }
-
-    let inputSymbol = inputTape.charAt(inputHead);
-    let transition = finiteControl.states[currState].transitions[columnConversion.indexOf(inputSymbol)];
-    console.log(transition);
-    currState = transition.nextState;
-    inputTape = setCharAt(inputTape, inputHead, transition.update);
-    if(transition.move === 'R') {
-        inputHead++;
-    } else {
-        inputHead--;
-    }
-
-    if(acceptingStates.includes(currState)) {
-        console.log("Computation Finished");
-    }
-
+    turingMachine.nextConfig();
     displayInputTape();
 };
 
@@ -152,6 +170,7 @@ const setCharAt = (str, index, chr) => {
     return str.substr(0, index) + chr + str.substr(index+1);
 };
 
+let turingMachine = new TuringMachine(inputTapeInit, -1, null, -1, [], []);
 displayInputTape();
 
 
