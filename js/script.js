@@ -1,44 +1,44 @@
 const inputTapeInit = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 
 class TuringMachine {
-    constructor(inputTape, inputHead, finiteControl, currState, acceptingStates, alphabet) {
+    constructor(inputTape, finiteControl) {
         this._inputTape = inputTape;
-        this._inputHead = inputHead;
+        this._inputTapeHead = 0;
         this._finiteControl = finiteControl;
-        this._currState = currState;
-        this._acceptingStates = acceptingStates;
-        this._alphabet = alphabet;
     }
 
     inputTapeDOM() {
         let inputTapeDOM = "";
         for(let i = 0; i < this._inputTape.length; i++) {
             let active = "";
-            if(i === this._inputHead) {
+            if(i === this._inputTapeHead) {
                 active = "active";
             }
-            inputTapeDOM += `<div id='input' class=${active}>${this._inputTape.charAt(i)}</div>`;
+            inputTapeDOM += `<div id='input' class=${active}>
+                ${this._inputTape.charAt(i)}</div>`;
         }
         return inputTapeDOM;
     }
 
     nextConfig() {
-        if(this._acceptingStates.includes(this._currState) || !this._finiteControl) {
+        if(!this._finiteControl || this._finiteControl.atAcceptingState()) {
             return;
         }
 
-        let inputSymbol = this._inputTape.charAt(this._inputHead);
-        let transition = this._finiteControl.states[this._currState].transitions[this._alphabet.indexOf(inputSymbol)];
+        let inputSymbol = this._inputTape.charAt(this._inputTapeHead);
+        let transition = this._finiteControl.getTransition(inputSymbol);
         console.log(transition);
-        this._currState = transition.nextState;
-        this._inputTape = setCharAt(this._inputTape, this._inputHead, transition.update);
+
+        this._finiteControl.currState = transition.nextState;
+        this._inputTape = setCharAt(this._inputTape, this._inputTapeHead,
+            transition.update);
         if(transition.move === 'R') {
-            this._inputHead++;
+            this._inputTapeHead++;
         } else {
-            this._inputHead--;
+            this._inputTapeHead--;
         }
 
-        if(this._acceptingStates.includes(this._currState)) {
+        if(this._finiteControl.atAcceptingState()) {
             console.log("Computation Finished");
         }
     }
@@ -82,8 +82,11 @@ class State {
 }
 
 class FiniteControl {
-    constructor(transitionTable) {
+    constructor(transitionTable, startState, acceptingStates, alphabet) {
         this._states = FiniteControl.initTransitionTable(transitionTable);
+        this._currState = startState;
+        this._acceptingStates = acceptingStates;
+        this._alphabet = alphabet;
     }
 
     static initTransitionTable(transitionTable) {
@@ -98,11 +101,37 @@ class FiniteControl {
     get states() {
         return this._states;
     }
+
+    get currState() {
+        return this._currState;
+    }
+
+    set currState(nextState) {
+        this._currState = nextState;
+    }
+
+    get acceptingStates() {
+        return this._acceptingStates;
+    }
+
+    get alphabet() {
+        return this._alphabet;
+    }
+
+    getTransition(inputSymbol) {
+        return this._states[this._currState].transitions[this._alphabet.indexOf(
+            inputSymbol)];
+    }
+
+    atAcceptingState() {
+        return this._acceptingStates.includes(this._currState);
+    }
 }
 
 const displayInputTape = () => {
     let inputTapeDOM = turingMachine.inputTapeDOM();
-    document.getElementById("input_tape").childNodes[1].innerHTML = inputTapeDOM;
+    document.getElementById("input_tape").childNodes[1].innerHTML
+        = inputTapeDOM;
 };
 
 const initConfig = (simulateSelect) => {
@@ -139,8 +168,9 @@ const initConfig = (simulateSelect) => {
                                 + ";25,#,R;;24,1,L;";
 
         inputTape = initInputTape(firstVal, secondVal);
-        finiteControl = new FiniteControl(transitionTable);
-        turingMachine = new TuringMachine(inputTape, 0, finiteControl, 0, ["25"], ['1', '#', 'b', 'x', 'y']);
+        finiteControl = new FiniteControl(transitionTable, 0, ["25"],
+            ['1', '#', 'b', 'x', 'y']);
+        turingMachine = new TuringMachine(inputTape, finiteControl);
     }
 
     displayInputTape();
@@ -170,7 +200,5 @@ const setCharAt = (str, index, chr) => {
     return str.substr(0, index) + chr + str.substr(index+1);
 };
 
-let turingMachine = new TuringMachine(inputTapeInit, -1, null, -1, [], []);
+let turingMachine = new TuringMachine(inputTapeInit, null)
 displayInputTape();
-
-
