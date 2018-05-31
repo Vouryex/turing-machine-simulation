@@ -7,17 +7,17 @@ class TuringMachine {
         this._finiteControl = finiteControl;
     }
 
-    inputTapeDOM() {
-        let inputTapeDOM = "";
+    inputTapeHTML() {
+        let inputTapeHTML = "";
         for(let i = 0; i < this._inputTape.length; i++) {
             let active = "";
             if(i === this._inputTapeHead) {
                 active = "active";
             }
-            inputTapeDOM += `<div id='input' class=${active}>
+            inputTapeHTML += `<div id='input' class=${active}>
                 ${this._inputTape.charAt(i)}</div>`;
         }
-        return inputTapeDOM;
+        return inputTapeHTML;
     }
 
     nextConfig() {
@@ -129,9 +129,9 @@ class FiniteControl {
 }
 
 const displayInputTape = () => {
-    let inputTapeDOM = turingMachine.inputTapeDOM();
+    let inputTapeHTML = turingMachine.inputTapeHTML();
     document.getElementById("input_tape").childNodes[1].innerHTML
-        = inputTapeDOM;
+        = inputTapeHTML;
 };
 
 const initConfig = (simulateSelect) => {
@@ -171,6 +171,22 @@ const initConfig = (simulateSelect) => {
         finiteControl = new FiniteControl(transitionTable, 0, ["25"],
             ['1', '#', 'b', 'x', 'y']);
         turingMachine = new TuringMachine(inputTape, finiteControl);
+    } else {
+        let inputString = document.getElementById("input_string").value;
+        document.getElementById("input_string").value = "";
+
+        const transitionTalbe = "1,b,R;2,b,R;;\n"
+                                + "1,A,R;2,A,R;3,A,R;\n"
+                                + "1,B,R;2,B,R;3,B,R;\n"
+                                + ";;4,b,L;\n"
+                                + "5,x,R;6,x,R;8,b,R;4,x,L\n"
+                                + "5,A,R;5,B,R;7,A,L;5,x,R\n"
+                                + "6,A,R;6,B,R;7,B,L;6,x,R\n"
+                                + "7,A,L;7,B,L;;4,x,L\n"
+                                + "9,A,L;9,B,L;;8,b,R";
+        inputTape = inputString + inputTapeInit;
+        finiteControl = new FiniteControl(transitionTalbe, 0, ['9'], ['A', 'B', 'b', 'x']);
+        turingMachine = new TuringMachine(inputTape, finiteControl);
     }
 
     displayInputTape();
@@ -198,6 +214,21 @@ const setCharAt = (str, index, chr) => {
         return str;
     }
     return str.substr(0, index) + chr + str.substr(index+1);
+};
+
+const select = (select) => {
+    let formHTML = "";
+    if(select === 1) {
+        formHTML = "<h1>x ^ y</h1>"
+                 + "<input type='number' id='first_value' placeholder='First Value'>"
+                 + "<input type='number' id='second_value' placeholder='Second Value'><br>"
+                 + "<button onclick='initConfig(1)'>Simulate</button>";
+    } else {
+        formHTML = "<h1>reverse string over the alphabet {A, B}</h1>"
+                 + "<input type='text' id='input_string' placeholder='Input String'><br>"
+                 + "<button onclick='initConfig(2)'>Simulate</button>";
+    }
+    document.getElementById("form").innerHTML = formHTML;
 };
 
 let turingMachine = new TuringMachine(inputTapeInit, null)

@@ -8,17 +8,15 @@
 </head>
 <body>
     <div class="container">
-        <div id="form">
-            <h1>x ^ y</h1>
-            <input type="number" id="first_value" placeholder="First Value"><br>
-            <input type="number" id="second_value" placeholder="Second Value"><br>
-            <button onclick="initConfig(1)">Simulate</button>
+        <div id="select">
+            <button onclick="select(1)">x^y</button>
+            <button onclick="select(2)">string reverse</button>
+
+            <div id="form"></div>
         </div>
 
         <div id="input_tape">
-            <div class="scroll">
-
-            </div>
+            <div class="scroll"></div>
         </div>
 
         <div id="next_configuration">

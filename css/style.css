@@ -1,5 +1,7 @@
 body {
     background-color: #56CBF9;
+    margin: 0;
+    padding: 0;
 }
 
 .container {
@@ -11,12 +13,16 @@ body {
     background-color: #FF729F;
 }
 
-#form {
+#select {
     margin-top: 130px;
 }
 
+#form {
+    margin: 0;
+}
+
 #form input {
-    margin: 3px 0;
+    margin: 3px 5px 3px 0;
 }
 
 #form button {
@@ -57,6 +63,6 @@ body {
 
 #next_configuration {
     width: 200px;
-    margin: 20px auto;
+    margin: 20px auto 0 auto;
 }
 
