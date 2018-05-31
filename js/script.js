@@ -1,3 +1,7 @@
+// resources:
+// -https://math.stackexchange.com/questions/2444676/a-turing-machine-which-computes-xy
+// -https://www.youtube.com/watch?v=Ham1ZBSGGjY
+
 const inputTapeInit = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 
 class TuringMachine {
@@ -38,8 +42,17 @@ class TuringMachine {
             this._inputTapeHead--;
         }
 
+        if(inputSymbol === 'b' && transition.update !== 'b') {
+            this._inputTape += 'b';
+        }
+        if(inputSymbol !== 'b' && transition.update === 'b') {
+            this._inputTape = this._inputTape.substring(0,
+                this._inputTape.length-1);
+        }
+
         if(this._finiteControl.atAcceptingState()) {
-            document.getElementById("finished").innerHTML = "<p>Computation Finished</p>";
+            document.getElementById("finished").innerHTML =
+                "<p>Computation Finished</p>";
         }
     }
 }
@@ -185,7 +198,8 @@ const initConfig = (simulateSelect) => {
                                 + "7,A,L;7,B,L;;4,x,L\n"
                                 + "9,A,L;9,B,L;;8,b,R";
         inputTape = inputString + inputTapeInit;
-        finiteControl = new FiniteControl(transitionTalbe, 0, ['9'], ['A', 'B', 'b', 'x']);
+        finiteControl = new FiniteControl(transitionTalbe, 0, ['9'],
+            ['A', 'B', 'b', 'x']);
         turingMachine = new TuringMachine(inputTape, finiteControl);
     }
 
