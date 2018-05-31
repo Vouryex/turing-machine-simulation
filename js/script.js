@@ -39,7 +39,7 @@ class TuringMachine {
         }
 
         if(this._finiteControl.atAcceptingState()) {
-            console.log("Computation Finished");
+            document.getElementById("finished").innerHTML = "<p>Computation Finished</p>";
         }
     }
 }
@@ -189,6 +189,7 @@ const initConfig = (simulateSelect) => {
         turingMachine = new TuringMachine(inputTape, finiteControl);
     }
 
+    document.getElementById("finished").innerHTML = "";
     displayInputTape();
 };
 
@@ -231,5 +232,15 @@ const select = (select) => {
     document.getElementById("form").innerHTML = formHTML;
 };
 
+const initSelectForm = () => {
+    formHTML = "<h1>x ^ y</h1>"
+             + "<input type='number' id='first_value' placeholder='First Value'>"
+             + "<input type='number' id='second_value' placeholder='Second Value'><br>"
+             + "<button onclick='initConfig(1)'>Simulate</button>";
+    document.getElementById("form").innerHTML = formHTML;
+}
+
+initSelectForm();
 let turingMachine = new TuringMachine(inputTapeInit, null)
 displayInputTape();
+

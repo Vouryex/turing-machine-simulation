@@ -1,5 +1,5 @@
 body {
-    background-color: #56CBF9;
+    background-color: #DAE3E5;
     margin: 0;
     padding: 0;
 }
@@ -10,7 +10,7 @@ body {
 }
 
 .active {
-    background-color: #FF729F;
+    background-color: #A1C6EA;
 }
 
 #select {
@@ -37,7 +37,7 @@ body {
     height: 45px;
     position:relative;
     margin: 20px auto 0 auto;
-    border: 3px solid #fff;
+    border: 3px solid #04080F;
     background-color: #fff;
     font-size: 0;
 }
@@ -58,7 +58,12 @@ body {
     font-size: 15px;
     margin: 0;
     padding: 3px;
-    border: 3px solid #56CBF9;*/
+    border: 3px solid #507DBC;*/
+}
+
+#finished {
+    display: inline-block;
+    color: #04080F;
 }
 
 #next_configuration {
