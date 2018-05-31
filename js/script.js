@@ -51,8 +51,7 @@ class TuringMachine {
         }
 
         if(this._finiteControl.atAcceptingState()) {
-            document.getElementById("finished").innerHTML =
-                "<p>Computation Finished</p>";
+            document.getElementById("finished").innerHTML = "<p class='info'>Computation finished!</p>";
         }
     }
 }
@@ -151,8 +150,18 @@ const initConfig = (simulateSelect) => {
     if(simulateSelect === 1) {
         firstVal = document.getElementById("first_value").value;
         secondVal = document.getElementById("second_value").value;
-        document.getElementById("first_value").value = "";
-        document.getElementById("second_value").value = "";
+
+        if(firstVal==='' || secondVal===''){
+        	document.getElementById("finished").innerHTML = "<p class='alert'>Don't leave input fields blank.</p>";
+        	return;
+        }
+
+        if(firstVal <= 0 || secondVal <= 0){
+        	document.getElementById("finished").innerHTML = "<p class='alert'>Input values must be positive.</p>";
+        	/*document.getElementById("first_value").value = "";
+        	document.getElementById("second_value").value = "";*/
+        	return;
+        }
 
         const transitionTable = "1,b,R;;;;\n"
                                 + "1,1,R;2,1,R;;;\n"
@@ -186,7 +195,12 @@ const initConfig = (simulateSelect) => {
         turingMachine = new TuringMachine(inputTape, finiteControl);
     } else {
         let inputString = document.getElementById("input_string").value;
-        document.getElementById("input_string").value = "";
+
+        if(!isValidStrInput(inputString)){
+        	document.getElementById("finished").innerHTML = "<p class='alert'>Input string should contain {A, B} only.</p>";
+        	/*document.getElementById("input_string").value = "";*/
+        	return;
+        }
 
         const transitionTalbe = "1,b,R;2,b,R;;\n"
                                 + "1,A,R;2,A,R;3,A,R;\n"
@@ -206,6 +220,16 @@ const initConfig = (simulateSelect) => {
     document.getElementById("finished").innerHTML = "";
     displayInputTape();
 };
+
+const isValidStrInput = (given) => {
+	for(let i = 0; i < given.length; i++) {
+		let currchar = given.charAt(i);
+        if(currchar!=='A' && currchar!=='B'){
+        	return false;
+        }
+    }
+    return true;
+}
 
 const initInputTape = (firstVal, secondVal) => {
     let inputTape = inputTapeInit;
@@ -244,6 +268,9 @@ const select = (select) => {
                  + "<button onclick='initConfig(2)'>Simulate</button>";
     }
     document.getElementById("form").innerHTML = formHTML;
+    turingMachine = new TuringMachine(inputTapeInit, null)
+    document.getElementById("finished").innerHTML = "";
+	displayInputTape();
 };
 
 const initSelectForm = () => {

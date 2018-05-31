@@ -7,11 +7,13 @@
     <script type="text/javascript" src="./js/script.js" async></script>
 </head>
 <body>
+    <div id="options">
+        <button class="mode" onclick="select(1)">x^y</button>
+        <button class="mode" onclick="select(2)">string reverse</button>
+    </div>
+
     <div class="container">
         <div id="select">
-            <button onclick="select(1)">x^y</button>
-            <button onclick="select(2)">string reverse</button>
-
             <div id="form"></div>
         </div>
 
@@ -25,6 +27,5 @@
             <button type="button" onclick="nextConfig()">Next Configuration</button>
         </div>
     </div>
-
 </body>
 </html>
